@@ -1,10 +1,10 @@
 import java.io.File;
 import java.util.Scanner;
 
-class Dispatcher{
+public class Dispatcher{
     public static void main(String[] args) {
 
-        System.out.println("Choose action \n1 - Clean \n2 - Count");
+        System.out.println("Choose action \n1 - Clean \n2 - Count \n3 - Rename folder");
 
         Scanner scanner = new Scanner(System.in);
         int method = scanner.nextInt();
@@ -27,7 +27,18 @@ class Controller{
             FileMethods.cleanFolderFromFiles(f);
         }else if(i == 2) {
             FileMethods.listFilesForFolder(f);
-        }  else {
+        } else if (i==3) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter old folder name: ");
+            String oldFolderName = scanner.nextLine().toLowerCase();
+
+            System.out.println("Enter new folder name: ");
+            String newFolderName = scanner.nextLine().toLowerCase();
+
+            FileMethods.renameFoldersInFolder(f, oldFolderName, newFolderName);
+
+
+        } else {
             System.out.println("number " + i + " out of the range");
         }
     }
@@ -100,6 +111,28 @@ class FileMethods {
         } else {
             System.out.println("File or folder does not exist.");
             return false;
+        }
+    }
+
+    static public void renameFoldersInFolder(File folder, String oldFolderName, String newFolderName) {
+
+        int renamedFolders = 0;
+
+        for (File fileEntry : folder.listFiles()) {
+            if (fileEntry.isDirectory() && fileEntry.getName().equalsIgnoreCase(oldFolderName)) {
+                File renamedFolder = new File(fileEntry.getParent() + File.separator + newFolderName);
+                if (fileEntry.renameTo(renamedFolder)) {
+                    renamedFolders++;
+                } else {
+                    System.out.println("Failed to rename folder: " + fileEntry.getName());
+                }
+            }
+        }
+
+        if (renamedFolders > 0) {
+            System.out.println("Renamed " + renamedFolders + " folders successfully");
+        } else {
+            System.out.println("No folders were renamed");
         }
     }
 }
