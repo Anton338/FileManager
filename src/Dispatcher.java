@@ -1,7 +1,7 @@
 import java.io.File;
 import java.util.Scanner;
 
-public class Main{
+class Dispatcher{
     public static void main(String[] args) {
 
         System.out.println("Choose action \n1 - Clean \n2 - Count");
