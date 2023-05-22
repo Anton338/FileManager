@@ -39,7 +39,7 @@ class Controller{
         String oldFolderName = scanner.nextLine().toLowerCase();
 
         System.out.println("Enter new folder name: ");
-        String newFolderName = scanner.nextLine().toLowerCase();
+        String newFolderName = scanner.nextLine();
 
         FileMethods.renameFoldersInFolder(f, oldFolderName, newFolderName);
     }
@@ -112,7 +112,6 @@ class FileMethods {
     }
 
     static public void renameFoldersInFolder(File folder, String oldFolderName, String newFolderName) {
-
         int renamedFolders = 0;
 
         for (File fileEntry : folder.listFiles()) {
