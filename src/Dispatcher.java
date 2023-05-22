@@ -28,25 +28,22 @@ class Controller{
         }else if(i == 2) {
             FileMethods.listFilesForFolder(f);
         } else if (i==3) {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Enter old folder name: ");
-            String oldFolderName = scanner.nextLine().toLowerCase();
-
-            System.out.println("Enter new folder name: ");
-            String newFolderName = scanner.nextLine().toLowerCase();
-
-            FileMethods.renameFoldersInFolder(f, oldFolderName, newFolderName);
-
-
+            renameFolderWithInput(f);
         } else {
             System.out.println("number " + i + " out of the range");
         }
     }
-}
+    static public void renameFolderWithInput(File f){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter old folder name: ");
+        String oldFolderName = scanner.nextLine().toLowerCase();
 
-class FileAdditionalCommands{
+        System.out.println("Enter new folder name: ");
+        String newFolderName = scanner.nextLine().toLowerCase();
 
-    public static int fileSize(File folder) {
+        FileMethods.renameFoldersInFolder(f, oldFolderName, newFolderName);
+    }
+   public static int fileSize(File folder) {
 
         int result = 0;
 
@@ -55,6 +52,7 @@ class FileAdditionalCommands{
         }
         return result;
     }
+
 }
 
 class FileMethods {
@@ -83,7 +81,7 @@ class FileMethods {
     static public void cleanFolderFromFiles(File folder) {
 
         int deletes = 0;
-        int expectedDeletes = FileAdditionalCommands.fileSize(folder);
+        int expectedDeletes = Controller.fileSize(folder);
 
         for (File fileEntry : folder.listFiles()) {
             if (fileEntry.delete()) {
@@ -98,10 +96,9 @@ class FileMethods {
                 System.out.println("Successfully deleted " + deletes + " files");
             } else {
                 System.out.println("Something went Wrong");
-                System.out.println("File xpected to delete " + expectedDeletes + "\nWas deleted " + deletes);
+                System.out.println("File expected to delete " + expectedDeletes + "\nWas deleted " + deletes);
             }
         }
-
     }
 
     public static boolean fileOrFolderExists(String path) {
@@ -119,7 +116,7 @@ class FileMethods {
         int renamedFolders = 0;
 
         for (File fileEntry : folder.listFiles()) {
-            if (fileEntry.isDirectory() && fileEntry.getName().equalsIgnoreCase(oldFolderName)) {
+            if (fileEntry.isDirectory() && fileEntry.getName().equals(oldFolderName)) {
                 File renamedFolder = new File(fileEntry.getParent() + File.separator + newFolderName);
                 if (fileEntry.renameTo(renamedFolder)) {
                     renamedFolders++;
@@ -128,7 +125,6 @@ class FileMethods {
                 }
             }
         }
-
         if (renamedFolders > 0) {
             System.out.println("Renamed " + renamedFolders + " folders successfully");
         } else {
