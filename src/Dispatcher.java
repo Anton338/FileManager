@@ -1,10 +1,15 @@
 import java.io.File;
 import java.util.Scanner;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class Dispatcher{
     public static void main(String[] args) {
 
-        System.out.println("Choose action \n1 - Clean \n2 - Count \n3 - Rename folder");
+        System.out.println("Choose action \n1 - Clean \n2 - Count \n3 - Rename folder \n4 - Archive folder");
 
         Scanner scanner = new Scanner(System.in);
         int method = scanner.nextInt();
@@ -29,6 +34,8 @@ class Controller{
             FileMethods.listFilesForFolder(f);
         } else if (i==3) {
             renameFolderWithInput(f);
+        } else if (i==4) {
+            createZipArchive(f);
         } else {
             System.out.println("number " + i + " out of the range");
         }
@@ -43,7 +50,7 @@ class Controller{
 
         FileMethods.renameFoldersInFolder(f, oldFolderName, newFolderName);
     }
-   public static int fileSize(File folder) {
+    public static int fileSize(File folder) {
 
         int result = 0;
 
@@ -52,6 +59,18 @@ class Controller{
         }
         return result;
     }
+    public static void createZipArchive(File f) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter directory path to save the archive: ");
+        String saveDirectory = scanner.nextLine();
+
+        System.out.println("Enter archive file name (without extension): ");
+        String archiveFileName = scanner.nextLine();
+
+        String archiveFilePath = saveDirectory + File.separator + archiveFileName + ".zip";
+        FileMethods.archiveFolder(f, archiveFilePath);
+    }
+
 
 }
 
@@ -128,6 +147,43 @@ class FileMethods {
             System.out.println("Renamed " + renamedFolders + " folders successfully");
         } else {
             System.out.println("No folders were renamed");
+        }
+    }
+    static public void archiveFolder(File folder, String archiveFileName) {
+        try {
+            FileOutputStream fos = new FileOutputStream(archiveFileName);
+            ZipOutputStream zos = new ZipOutputStream(fos);
+
+            addFolderToArchive("", folder, zos);
+
+            zos.close();
+            fos.close();
+            System.out.println("Folder archived successfully");
+
+        } catch (IOException e) {
+            System.out.println("Error occurred during archiving: " + e.getMessage());
+        }
+    }
+
+    private static void addFolderToArchive(String parentPath, File folder, ZipOutputStream zos) throws IOException {
+        for (File file : folder.listFiles()) {
+            if (file.isDirectory()) {
+                addFolderToArchive(parentPath + file.getName() + File.separator, file, zos);
+            } else {
+                FileInputStream fis = new FileInputStream(file);
+                String entryPath = parentPath + file.getName();
+                ZipEntry zipEntry = new ZipEntry(entryPath);
+                zos.putNextEntry(zipEntry);
+
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = fis.read(buffer)) > 0) {
+                    zos.write(buffer, 0, bytesRead);
+                }
+
+                zos.closeEntry();
+                fis.close();
+            }
         }
     }
 }
