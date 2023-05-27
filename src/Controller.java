@@ -11,7 +11,9 @@ public class Controller {
             renameFolderWithInput(f);
         } else if (i==4) {
             createZipArchive(f);
-        } else {
+        } else if (i==5) {
+            FileMethods.getWesFolder(f);
+        }else {
             System.out.println("number " + i + " out of the range");
         }
     }

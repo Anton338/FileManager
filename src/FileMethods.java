@@ -116,4 +116,24 @@ public class FileMethods {
             }
         }
     }
+    static public void getWesFolder(File folder){
+        long fileSizeInBytes = calculateFolderSize(folder);
+        System.out.println("Folder size: " + fileSizeInBytes + " bytes");
+    }
+    private static long calculateFolderSize(File folder){
+        long size =0;
+        if(folder.isDirectory()){
+            File[] files= folder.listFiles();
+            if(files !=null){
+                for(File file : files){
+                    if(file.isFile()){
+                        size +=  file.length();
+                    }else if(file.isDirectory()){
+                        size += calculateFolderSize(file);
+                    }
+                }
+            }
+        }
+        return size;
+    }
 }
